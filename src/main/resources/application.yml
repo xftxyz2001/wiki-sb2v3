@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: wiki
-
-
+  datasource:
+    url: jdbc:mysql://rm-2zehsi4i3cj077tj1bo.mysql.rds.aliyuncs.com:3306/wiki?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: wiki
+    password: Wiki1234
 
