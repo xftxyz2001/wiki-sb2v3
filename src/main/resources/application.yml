@@ -8,4 +8,5 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: wiki
     password: Wiki1234
-
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml

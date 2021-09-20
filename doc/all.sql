@@ -5,3 +5,5 @@ CREATE TABLE `test`  (
                          `password` varchar(50),
                          PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4;
+
+SELECT * From test;
