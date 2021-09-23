@@ -10,6 +10,7 @@
 import {defineComponent} from 'vue';
 import TheHeader from '@/components/the-header.vue'; // @ is an alias to /src
 import TheFooter from '@/components/the-footer.vue'; // @ is an alias to /src
+
 export default defineComponent({
   name: 'app',
   components: {
