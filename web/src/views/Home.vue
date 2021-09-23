@@ -49,7 +49,6 @@
     >
       <pre>
 {{ ebooks }}
-{{ ebooks2 }}
       </pre>
 
     </a-layout-content>
@@ -57,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, toRef} from 'vue';
+import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
 
 export default defineComponent({
@@ -65,22 +64,22 @@ export default defineComponent({
 //  通过axios调用电子书列表接口
   setup() {
     console.log("setup");
+    //绑定响应式变量
     const ebooks = ref();
-    // const ebooks1 = reactive({books: []});
 
     //组件加载完毕，界面渲染完毕后执行
     onMounted(() => {
       console.log("onMounted");
+      //发送请求
       axios.get("http://localhost:8880/ebook/list?name=Vue").then((response) => {
+        //响应数据的文本传递给响应式变量返回
         const data = response.data;
         ebooks.value = data.content;
-        // ebooks1.books = data.content;
         console.log(response);
       });
     });
     return {
       ebooks,
-      // ebooks2: toRef(ebooks1, "books")
     }
   }
 });

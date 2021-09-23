@@ -10,11 +10,11 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
+        registry.addMapping("/**")   //映射请求地址，针对所有接口
+                .allowedOrigins("*")   //允许来源所有
                 .allowedHeaders(CorsConfiguration.ALL)
                 .allowedMethods(CorsConfiguration.ALL)
-                .allowCredentials(true)
+                .allowCredentials(true)   //允许携带凭证sessionId,cookie
                 .maxAge(3600);//1小时内不需要再预检(发OPTIONS请求)
     }
 }
