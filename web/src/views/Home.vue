@@ -85,7 +85,6 @@ export default defineComponent({
   },
 //  通过axios调用电子书列表接口
   setup() {
-    console.log("setup");
     //绑定响应式变量
     const ebooks = ref();
 
@@ -97,7 +96,6 @@ export default defineComponent({
 
     //组件加载完毕，界面渲染完毕后执行
     onMounted(() => {
-      console.log("onMounted");
       //发送请求
       axios.get("/ebook/list").then((response) => {
         //响应数据的文本传递给响应式变量返回
