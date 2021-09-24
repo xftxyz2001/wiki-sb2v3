@@ -99,7 +99,7 @@ export default defineComponent({
     onMounted(() => {
       console.log("onMounted");
       //发送请求
-      axios.get("http://localhost:8880/ebook/list").then((response) => {
+      axios.get("/ebook/list").then((response) => {
         //响应数据的文本传递给响应式变量返回
         const data = response.data;
         ebooks.value = data.content;
