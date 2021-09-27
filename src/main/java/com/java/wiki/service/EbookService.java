@@ -8,6 +8,7 @@ import com.java.wiki.entity.EbookExample;
 import com.java.wiki.mapper.EbookMapper;
 import com.java.wiki.req.EbookReq;
 import com.java.wiki.resp.EbookResp;
+import com.java.wiki.resp.PageResp;
 import com.java.wiki.util.CopyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class EbookService {
     private EbookMapper ebookMapper;
 
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
 
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -34,14 +35,21 @@ public class EbookService {
             criteria.andNameLike("%" + req.getName() + "%");
         }
 
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(req.getNum(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
+
         LOG.info("总行数：{}", pageInfo.getTotal());
         LOG.info("总页数：{}", pageInfo.getPages());
 
+        PageResp<EbookResp> pageResp = new PageResp<>();
 
-        return CopyUtil.copyList(ebookList, EbookResp.class);
+        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+        return pageResp;
 
     }
 
