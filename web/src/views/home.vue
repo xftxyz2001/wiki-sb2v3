@@ -97,10 +97,15 @@ export default defineComponent({
     //组件加载完毕，界面渲染完毕后执行
     onMounted(() => {
       //发送请求
-      axios.get("/ebook/list").then((response) => {
+      axios.get("/ebook/list", {
+        params: {
+          num: 1,
+          size: 1000
+        }
+      }).then((response) => {
         //响应数据的文本传递给响应式变量返回
         const data = response.data;
-        ebooks.value = data.content;
+        ebooks.value = data.content.list;
       });
     });
     return {
