@@ -24,9 +24,20 @@
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
-            <a-button type="danger">
-              删除
-            </a-button>
+            <a-popconfirm
+                title="删除后不可恢复，确认删除?"
+                ok-text="是"
+                cancel-text="否"
+                @confirm="handleDelete(record.id)"
+            >
+              <a-button type="danger">
+                删除
+              </a-button>
+            </a-popconfirm>
+
+
+
+
           </a-space>
         </template>
       </a-table>
@@ -53,7 +64,7 @@
         <a-input v-model:value="ebook.category2Id"/>
       </a-form-item>
       <a-form-item label="描述">
-        <a-input v-model:value="ebook.desc" type="textarea"/>
+        <a-input v-model:value="ebook.description" type="textarea"/>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -148,11 +159,12 @@ export default defineComponent({
     const modalVisible = ref(false);
     const modalLoading = ref(false);
 
+    //点击对话框中的提交按钮后
     const handleModalOk = () => {
+      //显示加载条
       modalLoading.value = true;
-
+      //向后端发送post请求
       axios.post("/ebook/save", ebook.value).then((response) => {
-
         const data = response.data;  //data=CommonResp
         if (data.success) {
           modalVisible.value = false;
@@ -164,25 +176,41 @@ export default defineComponent({
             size: pagination.value.pageSize
           });
         }
-
       })
     };
 
     /**
-     * 编辑
+     * 点击编辑按钮
      */
     const edit = (record: any) => {
+      //显示模态对话框
       modalVisible.value = true;
       ebook.value = record;
     };
 
     /**
-     * 新增
+     * 点击新增按钮
      */
     const add = () => {
       modalVisible.value = true;
       ebook.value = {};
     };
+
+    //点击删除按钮
+    const handleDelete = (id: number) => {
+      //向后端发送delete请求
+      axios.delete("/ebook/delete/" + id).then((response) => {
+        const data = response.data;  //data=CommonResp
+        if (data.success) {
+          //重新加载列表
+          handleQuery({
+            num: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        }
+      });
+    };
+
 
     onMounted(() => {
       handleQuery({
@@ -200,6 +228,7 @@ export default defineComponent({
 
       edit,
       add,
+      handleDelete,
 
       ebook,
       modalVisible,
