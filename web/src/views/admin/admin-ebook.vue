@@ -35,9 +35,6 @@
               </a-button>
             </a-popconfirm>
 
-
-
-
           </a-space>
         </template>
       </a-table>
@@ -75,6 +72,7 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
+import {message} from "ant-design-vue";
 
 export default defineComponent({
   name: 'AdminEbook',
@@ -137,10 +135,14 @@ export default defineComponent({
       }).then((response) => {
         loading.value = false;
         const data = response.data;
-        ebooks.value = data.content.list;
-        // 重置分页按钮
-        pagination.value.current = params.num;
-        pagination.value.total = data.content.total;
+        if (data.success) {
+          ebooks.value = data.content.list;
+          // 重置分页按钮
+          pagination.value.current = params.num;
+          pagination.value.total = data.content.total;
+        } else {
+          message.error(data.message);
+        }
       });
     };
 
@@ -165,16 +167,17 @@ export default defineComponent({
       modalLoading.value = true;
       //向后端发送post请求
       axios.post("/ebook/save", ebook.value).then((response) => {
+        modalLoading.value = false;
         const data = response.data;  //data=CommonResp
         if (data.success) {
           modalVisible.value = false;
-          modalLoading.value = false;
-
           //重新加载列表
           handleQuery({
             num: pagination.value.current,
             size: pagination.value.pageSize
           });
+        } else {
+          message.error(data.message);
         }
       })
     };
