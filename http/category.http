@@ -1,0 +1,10 @@
+GET http://localhost:8880/category/list?num=1&size=4
+
+###
+
+POST http://localhost:88800/category/save
+Content-Type: application/json
+
+{}
+
+###
