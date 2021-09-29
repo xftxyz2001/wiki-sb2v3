@@ -117,7 +117,17 @@ export default defineComponent({
       }
     ];
 
-
+    /**
+     * 一级分类树，children属性就是二级分类
+     * [{
+     *   id: "",
+     *   name: "",
+     *   children: [{
+     *     id: "",
+     *     name: "",
+     *   }]
+     * }]
+     */
     const level1 = ref(); // 一级分类树，children属性就是二级分类
 
 
