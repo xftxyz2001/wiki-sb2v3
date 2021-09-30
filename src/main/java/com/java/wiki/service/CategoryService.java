@@ -37,9 +37,7 @@ public class CategoryService {
         CategoryExample categoryExample = new CategoryExample();
         categoryExample.setOrderByClause("sort asc");
 
-
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
-
 
         return CopyUtil.copyList(categoryList, CategoryQueryResp.class);
 
