@@ -42,6 +42,14 @@ insert into `category` (id, parent, name, sort) values (501, 500, '服务器', 5
 insert into `category` (id, parent, name, sort) values (502, 500, '开发工具', 502);
 insert into `category` (id, parent, name, sort) values (503, 500, '热门服务端语言', 503);
 
+insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (1, 1, 0, '文档1', 1, 0, 0);
+insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (2, 1, 1, '文档1.1', 1, 0, 0);
+insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (3, 1, 0, '文档2', 2, 0, 0);
+insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (4, 1, 3, '文档2.1', 1, 0, 0);
+insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (5, 1, 3, '文档2.2', 2, 0, 0);
+insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (6, 1, 5, '文档2.2.1', 1, 0, 0);
+
+
 DROP TABLE IF EXISTS `test`;
 CREATE TABLE `test`
 (
