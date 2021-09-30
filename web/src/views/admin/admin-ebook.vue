@@ -255,6 +255,13 @@ export default defineComponent({
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
           console.log("树形结构：", level1.value);
+
+          //分类加载完之后再加载电子书
+          handleQuery({
+            num: 1,
+            size: pagination.value.pageSize
+          });
+
         } else {
           message.error(data.message);
         }
@@ -275,10 +282,7 @@ export default defineComponent({
 
     onMounted(() => {
       handleQueryCategory();
-      handleQuery({
-        num: 1,
-        size: pagination.value.pageSize
-      });
+
     });
 
     return {
