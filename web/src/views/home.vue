@@ -7,11 +7,9 @@
           @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <router-link to="'/">
-            <MailOutlined>
-              <span>欢迎</span>
-            </MailOutlined>
-          </router-link>
+          <MailOutlined>
+            <span>欢迎</span>
+          </MailOutlined>
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
@@ -27,9 +25,15 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎使用加瓦知识库</h1>
+      </div>
+
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks"
+              :grid="{ gutter: 20, column: 3 }">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
+            <!--            点赞数阅读数 -->
             <template #actions>
               <span v-for="{ type, text } in actions" :key="type">
                 <component v-bind:is="type" style="margin-right: 8px"/>
@@ -37,9 +41,11 @@
               </span>
             </template>
             <a-list-item-meta :description="item.description">
+              <!-- 标题-->
               <template #title>
                 <a :href="item.href">{{ item.name }}</a>
               </template>
+              <!--  封面图-->
               <template #avatar>
                 <a-avatar :src="item.cover"/>
               </template>
@@ -79,7 +85,6 @@ export default defineComponent({
     const level1 = ref(); // 一级分类树，children属性就是二级分类
     let categorys: any;
 
-
     /**
      * 分类数据查询
      **/
@@ -97,36 +102,54 @@ export default defineComponent({
       });
     };
 
-    const handleClick = () => {
-      console.log("menu click")
+    const isShowWelcome = ref(true);
+    let categoryId2 = 0;
+
+
+    //点击菜单栏时触发
+    const handleClick = (value: any) => {
+      if (value.key == 'welcome') {
+        isShowWelcome.value = true;
+      } else {
+        categoryId2 = value.key;
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
+
     };
 
-    //组件加载完毕，界面渲染完毕后执行
-    onMounted(() => {
-      handleQueryCategory();
-
+    const handleQueryEbook = () => {
       //发送请求
       axios.get("/ebook/list", {
         params: {
           num: 1,
-          size: 1000
+          size: 1000,
+          categoryId2: categoryId2
         }
       }).then((response) => {
         //响应数据的文本传递给响应式变量返回
         const data = response.data;
         ebooks.value = data.content.list;
       });
+    }
+
+
+    //组件加载完毕，界面渲染完毕后执行
+    onMounted(() => {
+      handleQueryCategory();
     });
     return {
       ebooks,
       actions,
       level1,
-      handleClick
+      handleClick,
+      isShowWelcome,
     };
   },
 });
 </script>
 <style scoped>
+/*封面图片样式*/
 .ant-avatar {
   width: 50px;
   height: 50px;
