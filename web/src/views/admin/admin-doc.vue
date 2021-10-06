@@ -96,6 +96,7 @@ import axios from 'axios';
 import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import {useRoute} from 'vue-router';
+import E from 'wangeditor'
 
 export default defineComponent({
   name: 'AdminDoc',
@@ -169,7 +170,7 @@ export default defineComponent({
     const doc = ref({})
     const modalVisible = ref(false);
     const modalLoading = ref(false);
-
+    const editor = new E('#div1')
 
     //点击对话框中的提交按钮后
     const handleModalOk = () => {
@@ -266,7 +267,9 @@ export default defineComponent({
 
       // 为选择树添加一个"无"
       treeSelectData.value.unshift({id: 0, name: '无'});
-
+      setTimeout(function () {
+        editor.create();
+      }, 100);
     };
 
     /**
@@ -279,11 +282,13 @@ export default defineComponent({
         ebookId: route.query.ebookId
       };
 
-
       treeSelectData.value = Tool.copy(level1.value);
 
       // 为选择树添加一个"无"
       treeSelectData.value.unshift({id: 0, name: '无'});
+      setTimeout(function () {
+        editor.create();
+      }, 100);
     };
 
     //点击删除确认的按钮
