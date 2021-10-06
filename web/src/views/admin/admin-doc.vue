@@ -17,6 +17,7 @@
           </a-form-item>
         </a-form>
       </p>
+
       <a-table
           :columns="columns"
           :row-key="record => record.id"
@@ -27,11 +28,14 @@
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar"/>
         </template>
+
         <template v-slot:action="{ text, record }">
           <a-space size="small">
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
+
+            <!--  气泡确认框-->
             <a-popconfirm
                 title="删除后不可恢复，确认删除?"
                 ok-text="是"
@@ -44,6 +48,7 @@
             </a-popconfirm>
           </a-space>
         </template>
+
       </a-table>
     </a-layout-content>
   </a-layout>
@@ -74,6 +79,12 @@
       <a-form-item label="顺序">
         <a-input v-model:value="doc.sort"/>
       </a-form-item>
+
+      <a-form-item label="内容">
+        <div id="div1"></div>
+      </a-form-item>
+
+
     </a-form>
   </a-modal>
 </template>
@@ -82,7 +93,7 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
-import {message} from "ant-design-vue";
+import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import {useRoute} from 'vue-router';
 
@@ -159,6 +170,7 @@ export default defineComponent({
     const modalVisible = ref(false);
     const modalLoading = ref(false);
 
+
     //点击对话框中的提交按钮后
     const handleModalOk = () => {
       //显示加载条
@@ -208,11 +220,42 @@ export default defineComponent({
       }
     };
 
+    const ids: any[] = [];
+    const deleteIds: any[] = [];
+    const deleteNames: any[] = [];
+
+    const getDeleteIds = (treeSelectData: any, id: any) => {
+      // 遍历数组，即遍历某一层节点
+      for (let i = 0; i < treeSelectData.length; i++) {
+        const node = treeSelectData[i];
+        if (node.id === id) {
+          // 如果当前节点就是目标节点，放入结果集中
+          ids.push(id);
+          deleteIds.push(id);
+          deleteNames.push(node.name);
+          // 遍历所有子节点
+          const children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            for (let j = 0; j < children.length; j++) {
+              getDeleteIds(children, children[j].id)
+            }
+          }
+        } else {
+          // 如果当前节点不是目标节点，则到其子节点再找找看。
+          const children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            getDeleteIds(children, id);
+          }
+        }
+      }
+    };
+
 
     /**
      * 点击编辑按钮
      */
     const edit = (record: any) => {
+
       //显示模态对话框
       modalVisible.value = true;
       doc.value = Tool.copy(record);
@@ -230,6 +273,7 @@ export default defineComponent({
      * 点击新增按钮
      */
     const add = () => {
+
       modalVisible.value = true;
       doc.value = {
         ebookId: route.query.ebookId
@@ -240,19 +284,27 @@ export default defineComponent({
 
       // 为选择树添加一个"无"
       treeSelectData.value.unshift({id: 0, name: '无'});
-
     };
 
-    //点击删除按钮
+    //点击删除确认的按钮
     const handleDelete = (id: number) => {
-      //向后端发送delete请求
-      axios.delete("/doc/delete/" + id).then((response) => {
-        const data = response.data;  //data=CommonResp
-        if (data.success) {
-          //重新加载列表
-          handleQuery();
+      deleteIds.length = 0;
+      deleteNames.length = 0;
+      getDeleteIds(level1.value, id);
+      Modal.confirm({
+        title: '重要提醒',
+        content: '将删除：【' + deleteNames.join(",") + "】删除后不可恢复，确认删除？",
+        onOk() {
+          //向后端发送delete请求
+          axios.delete("/doc/delete/" + ids.join(",")).then((response) => {
+            const data = response.data;  //data=CommonResp
+            if (data.success) {
+              //重新加载列表
+              handleQuery();
+            }
+          });
         }
-      });
+      })
     };
 
 
