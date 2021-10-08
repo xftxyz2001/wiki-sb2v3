@@ -84,12 +84,23 @@
             </a-form-item>
 
             <a-form-item>
-              <div id="div1"></div>
+              <a-button type="primary" @click="handlePreviewContent()">
+                <EyeOutlined/>
+                内容预览
+              </a-button>
             </a-form-item>
 
+            <a-form-item>
+              <div id="div1"></div>
+            </a-form-item>
           </a-form>
         </a-col>
       </a-row>
+
+      <a-drawer width="900" placement="right" :closable="false" :visible="drawerVisible" @close="onDrawerClose">
+        <div class="wangeditor" :innerHTML="previewHtml"></div>
+      </a-drawer>
+
     </a-layout-content>
   </a-layout>
 
@@ -331,7 +342,16 @@ export default defineComponent({
         }
       })
     };
-
+// ----------------富文本预览--------------
+    const drawerVisible = ref(false);
+    const previewHtml = ref();
+    const handlePreviewContent = () => {
+      previewHtml.value = editor.txt.html();
+      drawerVisible.value = true;
+    };
+    const onDrawerClose = () => {
+      drawerVisible.value = false;
+    }
 
     onMounted(() => {
       handleQuery();
@@ -348,8 +368,12 @@ export default defineComponent({
       edit,
       add,
       handleDelete,
-      treeSelectData,
 
+      treeSelectData,
+      drawerVisible,
+      previewHtml,
+      handlePreviewContent,
+      onDrawerClose,
       doc,
       modalLoading,
       handleSave,
