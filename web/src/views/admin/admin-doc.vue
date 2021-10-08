@@ -168,19 +168,19 @@ export default defineComponent({
       });
     };
 
+
 // -------- 表单 ---------
     // 因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
     const treeSelectData = ref();
     treeSelectData.value = [];
     const doc = ref();
     doc.value = {}
-    const modalVisible = ref(false);
     const modalLoading = ref(false);
     const editor = new E('#div1')
     //上下层权重
     editor.config.zIndex = 0;
 
-    //点击对话框中的提交按钮后
+    //点击保存按钮后
     const handleSave = () => {
       //显示加载条
       modalLoading.value = true;
@@ -190,7 +190,7 @@ export default defineComponent({
         modalLoading.value = false;
         const data = response.data;  //data=CommonResp
         if (data.success) {
-          modalVisible.value = false;
+          message.success("保存成功！");
           //重新加载列表
           handleQuery();
         } else {
@@ -260,15 +260,27 @@ export default defineComponent({
       }
     };
 
+    /**
+     * 文档内容查询
+     **/
+    const handleQueryContent = () => {
+      axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          editor.txt.html(data.content);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
 
     /**
      * 点击编辑按钮
      */
     const edit = (record: any) => {
-
-      //显示模态对话框
-      modalVisible.value = true;
+      editor.txt.html("");
       doc.value = Tool.copy(record);
+      handleQueryContent();
 
       // 不能选择当前节点及其所有子孙节点，作为父节点，会使树断开
       treeSelectData.value = Tool.copy(level1.value);
@@ -282,8 +294,7 @@ export default defineComponent({
      * 点击新增按钮
      */
     const add = () => {
-
-      modalVisible.value = true;
+      editor.txt.html("");
       doc.value = {
         ebookId: route.query.ebookId
       };
@@ -334,7 +345,6 @@ export default defineComponent({
       treeSelectData,
 
       doc,
-      modalVisible,
       modalLoading,
       handleSave,
     }
