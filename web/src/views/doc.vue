@@ -1,6 +1,7 @@
 <template>
   <a-layout>
     <a-layout-content :style="{background:'#fff',padding:'24px',margin:0,minHeight:'280px'}">
+      <h3 v-if="level1.length ===0">对不起，找不到相关文档！</h3>
       <a-row>
         <a-col :span="6">
           <a-tree
@@ -9,6 +10,7 @@
               @select="onSelect"
               :replaceFields="{title: 'name', key: 'id', value: 'id'}"
               :defaultExpandAll="true"
+              :defaultSelectedKeys="defaultSelectedKeys"
           >
           </a-tree>
         </a-col>
@@ -35,6 +37,8 @@ export default {
     const docs = ref();
     const route = useRoute();
     const html = ref();
+    const defaultSelectedKeys = ref();
+    defaultSelectedKeys.value = [];
     /**
      * 一级分类树，children属性就是二级分类
      * [{
@@ -49,22 +53,6 @@ export default {
     const level1 = ref(); // 一级分类树，children属性就是二级分类
     level1.value = [];
 
-    /**
-     * 数据查询
-     **/
-    const handleQuery = () => {
-      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
-        const data = response.data;
-        if (data.success) {
-          docs.value = data.content;
-
-          level1.value = [];
-          level1.value = Tool.array2Tree(docs.value, 0);
-        } else {
-          message.error(data.message);
-        }
-      });
-    };
 
     /**
      * 文档内容查询
@@ -79,6 +67,29 @@ export default {
         }
       });
     };
+    /**
+     * 数据查询
+     **/
+    const handleQuery = () => {
+      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          docs.value = data.content;
+
+          level1.value = [];
+          level1.value = Tool.array2Tree(docs.value, 0);
+
+          if (Tool.isNotEmpty(level1)) {
+            defaultSelectedKeys.value = [level1.value[0].id];
+            handleQueryContent(level1.value[0].id);
+          }
+
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
 
     const onSelect = (selectedKeys: any, info: any) => {
       if (Tool.isNotEmpty(selectedKeys)) {
@@ -93,7 +104,8 @@ export default {
     return {
       level1,
       html,
-      onSelect
+      onSelect,
+      defaultSelectedKeys
     }
   }
 }
@@ -151,7 +163,7 @@ export default {
 
 /* 和antdv p冲突，覆盖掉 */
 .wangeditor blockquote p {
-  font-family: "YouYuan",serif;
+  font-family: "YouYuan", serif;
   margin: 20px 10px !important;
   font-size: 16px !important;
   font-weight: 600;
