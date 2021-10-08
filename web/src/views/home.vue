@@ -43,7 +43,9 @@
             <a-list-item-meta :description="item.description">
               <!-- 标题-->
               <template #title>
-                <a :href="item.href">{{ item.name }}</a>
+                <router-link :to="'/doc?ebookId='+item.id">
+                  {{ item.name }}
+                </router-link>
               </template>
               <!--  封面图-->
               <template #avatar>
