@@ -13,6 +13,7 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
+          <div :innerHTML="html"></div>
         </a-col>
       </a-row>
     </a-layout-content>
@@ -23,7 +24,7 @@
 
 </template>
 
-<script>
+<script lang="ts">
 
 
 import {onMounted, ref} from "vue";
@@ -37,6 +38,7 @@ export default {
   setup() {
     const docs = ref();
     const route = useRoute();
+    const html = ref();
     /**
      * 一级分类树，children属性就是二级分类
      * [{
@@ -68,11 +70,34 @@ export default {
       });
     };
 
+    /**
+     * 文档内容查询
+     **/
+    const handleQueryContent = (id: number) => {
+      axios.get("/doc/find-content/" + id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          html.value = data.content;
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    const onSelect = (selectedKeys: any, info: any) => {
+      if (Tool.isNotEmpty(selectedKeys)) {
+        handleQueryContent(selectedKeys[0]);
+      }
+    }
+
+
     onMounted(() => {
       handleQuery();
     });
     return {
       level1,
+      html,
+      onSelect
     }
   }
 }
