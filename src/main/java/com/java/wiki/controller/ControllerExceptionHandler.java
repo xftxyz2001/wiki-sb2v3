@@ -3,7 +3,7 @@ package com.java.wiki.controller;
 import com.java.wiki.resp.CommonResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,11 +18,11 @@ public class ControllerExceptionHandler {
 
     /**
      * 校验异常统一处理
-     *
      */
-    @ExceptionHandler(value = BindException.class)
+    //MethodArgumentNotValidException
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseBody
-    public CommonResp<?> validExceptionHandler(BindException e) {
+    public CommonResp<?> validExceptionHandler(MethodArgumentNotValidException e) {
         CommonResp<?> commonResp = new CommonResp<>();
         LOG.warn("参数校验失败：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         commonResp.setSuccess(false);
