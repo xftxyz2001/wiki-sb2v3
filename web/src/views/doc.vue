@@ -32,7 +32,7 @@ import {message} from "ant-design-vue";
 import {useRoute} from "vue-router";
 
 export default {
-  name: "doc",
+  name: "Doc",
   setup() {
     const docs = ref();
     const route = useRoute();

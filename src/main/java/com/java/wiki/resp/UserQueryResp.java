@@ -1,17 +1,13 @@
-package com.java.wiki.req;
+package com.java.wiki.resp;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-public class CategorySaveReq {
+public class UserQueryResp {
     private Long id;
 
-    private Long parent;
+    private String loginName;
 
-    @NotBlank(message = "【名称】不能为空")
     private String name;
-    @NotNull(message = "【排序】不能为空")
-    private Integer sort;
+
+    private String password;
 
     public Long getId() {
         return id;
@@ -21,12 +17,12 @@ public class CategorySaveReq {
         this.id = id;
     }
 
-    public Long getParent() {
-        return parent;
+    public String getLoginName() {
+        return loginName;
     }
 
-    public void setParent(Long parent) {
-        this.parent = parent;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 
     public String getName() {
@@ -37,12 +33,12 @@ public class CategorySaveReq {
         this.name = name;
     }
 
-    public Integer getSort() {
-        return sort;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSort(Integer sort) {
-        this.sort = sort;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -52,9 +48,9 @@ public class CategorySaveReq {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", parent=").append(parent);
+        sb.append(", loginName=").append(loginName);
         sb.append(", name=").append(name);
-        sb.append(", sort=").append(sort);
+        sb.append(", password=").append(password);
         sb.append("]");
         return sb.toString();
     }
