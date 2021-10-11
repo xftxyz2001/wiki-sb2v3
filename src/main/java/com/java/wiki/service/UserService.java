@@ -65,7 +65,7 @@ public class UserService {
     public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
         if (ObjectUtils.isEmpty(req.getId())) {
-            if (ObjectUtils.isEmpty(selectByLoginName(req.getLoginName()))) {
+            if (ObjectUtils.isEmpty(this.selectByLoginName(req.getLoginName()))) {
                 //新增
                 user.setId(snowFlake.nextId());
                 userMapper.insert(user);
@@ -74,7 +74,9 @@ public class UserService {
                 throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
             }
         } else {
+            //更新
             user.setLoginName(null);
+            user.setPassword(null);
             userMapper.updateByPrimaryKeySelective(user);
         }
     }
