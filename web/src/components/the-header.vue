@@ -61,8 +61,8 @@ export default defineComponent({
   name: 'the-header',
   setup() {
     const loginUser = ref({
-      loginName: "test",
-      password: "test",
+      loginName: "",
+      password: "",
     });
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);

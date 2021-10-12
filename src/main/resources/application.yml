@@ -8,6 +8,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: wikidev
     password: Wiki1234
+  redis:
+    host: r-uf6ljbcdaxobsifyctpd.redis.rds.aliyuncs.com
+    port: 6379
+    password: Redis000
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
 logging:
@@ -16,4 +20,3 @@ logging:
       java:
         wiki:
           mapper: trace
-
