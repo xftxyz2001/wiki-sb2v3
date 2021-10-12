@@ -10,3 +10,9 @@ name=TEST12
 ###
 
 GET http://localhost:8880/test/list
+###
+
+GET http://localhost:8880/redis/get/103015748082995200
+Accept: application/json
+
+###
