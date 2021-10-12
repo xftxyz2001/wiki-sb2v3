@@ -34,7 +34,6 @@ public class ControllerExceptionHandler {
     /**
      * 业务异常统一处理（新增用户名重复/）
      */
-    //MethodArgumentNotValidException
     @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
     public CommonResp<?> businessExceptionHandler(BusinessException e) {

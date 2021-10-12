@@ -8,11 +8,13 @@ import com.java.wiki.entity.UserExample;
 import com.java.wiki.exception.BusinessException;
 import com.java.wiki.exception.BusinessExceptionCode;
 import com.java.wiki.mapper.UserMapper;
+import com.java.wiki.req.UserLoginReq;
 import com.java.wiki.req.UserQueryReq;
 import com.java.wiki.req.UserResetPasswordReq;
 import com.java.wiki.req.UserSaveReq;
-import com.java.wiki.resp.UserQueryResp;
 import com.java.wiki.resp.PageResp;
+import com.java.wiki.resp.UserLoginResp;
+import com.java.wiki.resp.UserQueryResp;
 import com.java.wiki.util.CopyUtil;
 import com.java.wiki.util.SnowFlake;
 import org.slf4j.Logger;
@@ -82,10 +84,21 @@ public class UserService {
         }
     }
 
+    /**
+     * 删除用户
+     *
+     * @param id
+     */
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 根据登录名查询用户对象
+     *
+     * @param loginName
+     * @return
+     */
     public User selectByLoginName(String loginName) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
@@ -104,4 +117,20 @@ public class UserService {
         userMapper.updateByPrimaryKeySelective(user);
     }
 
+    //登录校验
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(userDb)) {
+            LOG.info("用户名不存在,{}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+        } else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                //登录成功
+                return CopyUtil.copy(userDb, UserLoginResp.class);
+            } else {
+                LOG.info("密码不对，输入密码：{},数据库密码：{}", req.getPassword(), userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
+        }
+    }
 }
