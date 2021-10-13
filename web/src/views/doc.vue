@@ -15,6 +15,14 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
+          <div>
+            <h2>{{ doc.name }}</h2>
+            <div>
+              <span>阅读数：{{ doc.viewCount }}</span> &nbsp; &nbsp;
+              <span>点赞数：{{ doc.voteCount }}</span>
+            </div>
+            <a-divider style="height: 2px; background-color: #9999cc"/>
+          </div>
           <div class="wangeditor" :innerHTML="html"></div>
         </a-col>
       </a-row>
@@ -39,6 +47,9 @@ export default {
     const html = ref();
     const defaultSelectedKeys = ref();
     defaultSelectedKeys.value = [];
+    const doc = ref();
+    doc.value = {};
+
     /**
      * 一级分类树，children属性就是二级分类
      * [{
@@ -82,8 +93,8 @@ export default {
           if (Tool.isNotEmpty(level1)) {
             defaultSelectedKeys.value = [level1.value[0].id];
             handleQueryContent(level1.value[0].id);
+            doc.value = level1.value[0];
           }
-
         } else {
           message.error(data.message);
         }
@@ -93,6 +104,8 @@ export default {
 
     const onSelect = (selectedKeys: any, info: any) => {
       if (Tool.isNotEmpty(selectedKeys)) {
+        // 选中某一节点时，加载该节点的文档信息
+        doc.value = info.selectedNodes[0].props;
         handleQueryContent(selectedKeys[0]);
       }
     }
@@ -105,7 +118,8 @@ export default {
       level1,
       html,
       onSelect,
-      defaultSelectedKeys
+      defaultSelectedKeys,
+      doc,
     }
   }
 }
