@@ -6,6 +6,8 @@ import com.github.pagehelper.PageInfo;
 import com.java.wiki.entity.Content;
 import com.java.wiki.entity.Doc;
 import com.java.wiki.entity.DocExample;
+import com.java.wiki.exception.BusinessException;
+import com.java.wiki.exception.BusinessExceptionCode;
 import com.java.wiki.mapper.ContentMapper;
 import com.java.wiki.mapper.DocMapper;
 import com.java.wiki.mapper.DocMapperCust;
@@ -14,6 +16,8 @@ import com.java.wiki.req.DocSaveReq;
 import com.java.wiki.resp.DocQueryResp;
 import com.java.wiki.resp.PageResp;
 import com.java.wiki.util.CopyUtil;
+import com.java.wiki.util.RedisUtil;
+import com.java.wiki.util.RequestContext;
 import com.java.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private RedisUtil redisUtil;
 
 
     public List<DocQueryResp> all(Long ebookId) {
@@ -123,6 +130,14 @@ public class DocService {
 
     public void vote(Long id) {
         docMapperCust.increaseVoteCount(id);
+        String key = RequestContext.getRemoteAddr();
+        //id+远程ip作为key和value，24小时的有效期
+        if (redisUtil.validateRepeat("DOC_VOTE" + id + "_" + key, 3600 * 24)) {
+            docMapperCust.increaseViewCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
+
     }
 
 
