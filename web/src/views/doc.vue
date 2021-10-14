@@ -24,6 +24,16 @@
             <a-divider style="height: 2px; background-color: #9999cc"/>
           </div>
           <div class="wangeditor" :innerHTML="html"></div>
+          <!--          点赞-->
+          <div class="vote-div">
+            <a-button type="primary" shape="round" :size="'large'" @click="vote">
+              <template #icon>
+                <LikeOutlined/> &nbsp;点赞：{{ doc.voteCount }}
+              </template>
+            </a-button>
+          </div>
+
+
         </a-col>
       </a-row>
     </a-layout-content>
@@ -106,9 +116,22 @@ export default {
       if (Tool.isNotEmpty(selectedKeys)) {
         // 选中某一节点时，加载该节点的文档信息
         doc.value = info.selectedNodes[0].props;
+        //加载内容
         handleQueryContent(selectedKeys[0]);
       }
     }
+
+    //点赞按钮
+    const vote = () => {
+      axios.get('/doc/vote/' + doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          doc.value.voteCount++;
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
 
 
     onMounted(() => {
@@ -120,6 +143,7 @@ export default {
       onSelect,
       defaultSelectedKeys,
       doc,
+      vote,
     }
   }
 }
@@ -181,5 +205,10 @@ export default {
   margin: 20px 10px !important;
   font-size: 16px !important;
   font-weight: 600;
+}
+
+.vote-div {
+  padding: 15px;
+  text-align: center;
 }
 </style>
