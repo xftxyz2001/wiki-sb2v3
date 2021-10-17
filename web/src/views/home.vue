@@ -35,9 +35,17 @@
           <a-list-item key="item.name">
             <!--            点赞数阅读数 -->
             <template #actions>
-              <span v-for="{ type, text } in actions" :key="type">
-                <component v-bind:is="type" style="margin-right: 8px"/>
-                {{ text }}
+              <span>
+                <component v-bind:is="'FileOutlined'" style="margin-right: 8px"/>
+                {{ item.docCount }}
+              </span>
+              <span>
+                <component v-bind:is="'UserOutlined'" style="margin-right: 8px"/>
+                {{ item.viewCount }}
+              </span>
+              <span>
+                <component v-bind:is="'LikeOutlined'" style="margin-right: 8px"/>
+                {{ item.voteCount }}
               </span>
             </template>
             <a-list-item-meta :description="item.description">
@@ -61,7 +69,7 @@
 
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';
-import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
+import {FileOutlined, UserOutlined, LikeOutlined,} from '@ant-design/icons-vue';
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
@@ -69,9 +77,9 @@ import {message} from "ant-design-vue";
 export default defineComponent({
   name: 'Home',
   components: {
-    StarOutlined,
+    FileOutlined,
+    UserOutlined,
     LikeOutlined,
-    MessageOutlined,
   },
 //  通过axios调用电子书列表接口
   setup() {
