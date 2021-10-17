@@ -4,6 +4,7 @@ package com.java.wiki.aspect;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
 import com.java.wiki.util.RequestContext;
+import com.java.wiki.util.SnowFlake;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -13,11 +14,13 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +31,18 @@ public class LogAspect {
 
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
+    @Resource
+    private SnowFlake snowFlake;
+
     @Pointcut("execution(public * com.java.wiki.controller..*Controller.*(..))")
     public void controllerPointcut() {
     }
 
     @Before("controllerPointcut()")
-    public void doBefore(JoinPoint joinPoint) throws Throwable {
+    public void doBefore(JoinPoint joinPoint) {
+        //增加日志流水号
+        MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
+
         //开始打印请求日志
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
@@ -85,12 +94,15 @@ public class LogAspect {
     @Around("controllerPointcut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
+
         Object result = proceedingJoinPoint.proceed();
+
         // 排除字段，敏感字段或太长的字段不显示
         String[] excludeProperties = {"password", "file"};
         PropertyPreFilters filters = new PropertyPreFilters();
         PropertyPreFilters.MySimplePropertyPreFilter excludefilter = filters.addFilter();
         excludefilter.addExcludes(excludeProperties);
+
         LOG.info("返回结果: {}", JSONObject.toJSONString(result, excludefilter));
         LOG.info("------------- AOP结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
         return result;
