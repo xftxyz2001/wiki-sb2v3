@@ -19,7 +19,6 @@ import com.java.wiki.util.CopyUtil;
 import com.java.wiki.util.RedisUtil;
 import com.java.wiki.util.RequestContext;
 import com.java.wiki.util.SnowFlake;
-import com.java.wiki.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class DocService {
     private RedisUtil redisUtil;
 
     @Resource
-    private WebSocketServer webSocketServer;
+    private WsService wsService;
 
     public List<DocQueryResp> all(Long ebookId) {
 
@@ -143,7 +142,7 @@ public class DocService {
 
         //推送消息
         Doc docDb = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("【" + docDb.getName() + "】被点赞");
+        wsService.sendInfo("【" + docDb.getName() + "】被点赞");
 
     }
 
