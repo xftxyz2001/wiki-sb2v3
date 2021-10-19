@@ -21,7 +21,9 @@ import com.java.wiki.util.RequestContext;
 import com.java.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -85,6 +87,7 @@ public class DocService {
     }
 
     //保存
+    @Transactional
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
         Content content = CopyUtil.copy(req, Content.class);
@@ -142,7 +145,8 @@ public class DocService {
 
         //推送消息
         Doc docDb = docMapper.selectByPrimaryKey(id);
-        wsService.sendInfo("【" + docDb.getName() + "】被点赞");
+        String logId = MDC.get("LOG_ID");
+        wsService.sendInfo("【" + docDb.getName() + "】被点赞", logId);
 
     }
 
