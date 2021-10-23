@@ -3,6 +3,7 @@ package com.java.wiki.controller;
 import com.java.wiki.resp.CommonResp;
 import com.java.wiki.resp.StatisticResp;
 import com.java.wiki.service.EbookSnapshotService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,10 +18,11 @@ public class EbookSnapshotController {
     private EbookSnapshotService service;
 
 
+    @GetMapping("/get-statistic")
     public CommonResp getStatistic() {
-        List<StatisticResp> statisticResps = service.getStatistic();
+        List<StatisticResp> statisticResp = service.getStatistic();
         CommonResp<List<StatisticResp>> commonResp = new CommonResp<>();
-        commonResp.setContent(statisticResps);
+        commonResp.setContent(statisticResp);
         return commonResp;
     }
 

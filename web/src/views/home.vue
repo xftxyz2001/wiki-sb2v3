@@ -26,7 +26,7 @@
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       <div class="welcome" v-show="isShowWelcome">
-        <h1>欢迎使用加瓦知识库</h1>
+        <the-welcome></the-welcome>
       </div>
 
       <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks"
@@ -73,6 +73,7 @@ import {FileOutlined, UserOutlined, LikeOutlined,} from '@ant-design/icons-vue';
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
+import TheWelcome from '@/components/the-welcome.vue';
 
 export default defineComponent({
   name: 'Home',
@@ -80,6 +81,7 @@ export default defineComponent({
     FileOutlined,
     UserOutlined,
     LikeOutlined,
+    TheWelcome
   },
 //  通过axios调用电子书列表接口
   setup() {
